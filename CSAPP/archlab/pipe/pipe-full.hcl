@@ -1,7 +1,21 @@
 # Jiang Wentao
 # 2013011717
 #
+# Description:
+# It is easy to implement iaddq based on the seq version
 #
+# As for the optimization, I considered the situation where a mrmovq
+# command is followed by a rmmovq command, which appears in ncopy.ys
+# for the remaining part of the data. The situation can be described
+# by:
+# M_icode == IMRMOVQ && E_icode == IRMMOVQ
+#		 && M_dstM == E_srcA && M_dstM != E_srcB
+# when passing value to e_valA
+# and by:
+# D_icode == IRMMOVQ && E_dstM == d_srcA && E_dstM != d_srcB
+# for F_stall, D_stall, D_bubble and E_bubble.
+# After modifying those parts (where notes are also added), the CPE
+# decrease to 58.6 on average.
 #
 #
 #/* $begin pipe-all-hcl */

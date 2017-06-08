@@ -1,5 +1,7 @@
 # Jiang Wentao
 # 2013011717
+#
+# Description:
 # iaddq adds an instant number to a register, hence it requires rB and
 # V, i.e., it needs to read and write register rB and needs valC. For
 # the ALU, the first input is valC and the second input is the value of

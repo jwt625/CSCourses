@@ -28,16 +28,15 @@ main:
 
 # long rsum_list(list_ptr ls)
 rsum_list:
-	irmovq $0x8,%r8
-	subq %r8, %rsp		
+	irmovq $0x8,%r8	
 	pushq %rbx		# save %rbx
         rrmovq %rdi,%rsi        # %rsi = ls
         xorq %rax,%rax          # sum = 0
         andq %rsi,%rsi          # set CC
         jmp test                # goto test
 recur:
-        mrmovq (%rsi),%rbx	# %rbx = ls->next
-	mrmovq 8(%rsi),%rdi
+        mrmovq (%rsi),%rbx	# %rbx = val
+	mrmovq 8(%rsi),%rdi     # %rdi = ls->next
 	call rsum_list		# rsum_list(ls->next)
 	addq %rbx, %rax		# %rax = val + rest
 	popq %rbx		# restore %rbx
@@ -46,7 +45,6 @@ recur:
 test:
         jne recur               # stop when 0
 	popq %rbx		# restore %rbx
-	addq %r8, %rsp
         ret
 
 

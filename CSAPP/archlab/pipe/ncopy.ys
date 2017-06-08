@@ -7,8 +7,21 @@
 # Return the number of positive words (>0) contained in src.
 #
 # Include your name and ID here.
+# Jiang Wentao, 2013011717
 #
 # Describe how and why you modified the baseline code.
+# I first split the loop into a 10-depth loop, all using register %r10.
+# In each sub-loop, the memory is read & write and the %rax increased if
+# value is positive. The remaining items is dealt with a jump table, 
+# where the correct address is pushed so that after the return command,
+# the program goes to a point to execute the remaining moving commands.
+# The program worked but with bad performance. I then use five different 
+# registers for the sub-loops, read memory five times and then write the 
+# memory five times. The remaining part is not modified. The performance
+# increased a lot (i.e. the CPE decreased). Further optimization is done
+# in pipe-full.hcl
+#
+# 
 #
 ##################################################################
 # Do not modify this portion
@@ -98,7 +111,7 @@ Remain:
 	addq %rdx, %rdx		# len *= 8;
 	addq %rdx, %rdx
 	addq %rdx, %rdx
-	mrmovq JTEnd(%rdx), %rdx # use a jumptable to deal with left operations
+	mrmovq JTEnd(%rdx), %rdx # use a jumptable to deal with the remaining operations
 	pushq %rdx		# jmp *(JTEND + 8*(len0 - 10))
 	ret
 

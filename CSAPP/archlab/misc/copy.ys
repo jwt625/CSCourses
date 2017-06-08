@@ -31,7 +31,6 @@ main:
 # long copy_block(long *src, long *dest, long len)
 copy_block:
 	xorq %rax, %rax		# %rax = 0
-	# rrmovq %rdx, %r8	# %r8 = len
 	irmovq $1, %r9		# %r9 = 1
 	irmovq $8, %r10		# %r10 = 8 
 	andq %rdx, %rdx         # set CC
