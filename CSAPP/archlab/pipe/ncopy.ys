@@ -24,69 +24,69 @@ ncopy:
 	jle Remain		# if len <= 10, goto Remain:
 
 InLoop0:	
-	mrmovq (%rdi), %rcx	# read val from src...
-	rmmovq %rcx, (%rsi)	# ...and store it to dst
+	mrmovq (%rdi), %rcx	# read val
+	mrmovq 8(%rdi), %r8     # read val
+	mrmovq 16(%rdi), %r9    # read val
+	mrmovq 24(%rdi), %r10   # read val
+	mrmovq 32(%rdi), %r11   # read val
+	rmmovq %rcx, (%rsi)	# store it to dst
+        rmmovq %r8, 8(%rsi)     # store it to dst
+        rmmovq %r10, 24(%rsi)   # store to dst
+        rmmovq %r9, 16(%rsi)    # store to dst
+        rmmovq %r11, 32(%rsi)   # store to dst
 	andq %rcx, %rcx		# val <= 0?
 	jle InLoop1
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax          # count++
 				# loop for 10 times
 InLoop1:
-	mrmovq 8(%rdi), %r8     # read val from src...
-        rmmovq %r8, 8(%rsi)     # ...and store it to dst
-        andq %r8, %r8         # val <= 0?
+        andq %r8, %r8         	# val <= 0?
         jle InLoop2
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 
 InLoop2:
-	mrmovq 16(%rdi), %r9     # read val
-        rmmovq %r9, 16(%rsi)     # store to dst
-        andq %r9, %r9         # val <= 0?
+        andq %r9, %r9         	# val <= 0?
         jle InLoop3
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 
 InLoop3:
-	mrmovq 24(%rdi), %r10     # read val
-        rmmovq %r10, 24(%rsi)     # store to dst
         andq %r10, %r10         # val <= 0?
         jle InLoop4
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 
 InLoop4:
-	mrmovq 32(%rdi), %r11     # read val
-        rmmovq %r11, 32(%rsi)     # store to dst
         andq %r11, %r11         # val <= 0?
         jle InLoop5
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 InLoop5:
-	mrmovq 40(%rdi), %rcx     # read val
-        rmmovq %rcx, 40(%rsi)     # store to dst
+	mrmovq 40(%rdi), %rcx   # read val
+	mrmovq 48(%rdi), %r8    # read val
+	mrmovq 56(%rdi), %r9    # read val
+	mrmovq 64(%rdi), %r10   # read val
+	mrmovq 72(%rdi), %r11   # read val
+        rmmovq %rcx, 40(%rsi)   # store to dst
+        rmmovq %r8, 48(%rsi)    # store to dst
+        rmmovq %r9, 56(%rsi)    # store to dst
+        rmmovq %r10, 64(%rsi)   # store to dst
+        rmmovq %r11, 72(%rsi)   # store to dst
         andq %rcx, %rcx         # val <= 0?
         jle InLoop6
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 InLoop6:
-	mrmovq 48(%rdi), %r8     # read val
-        rmmovq %r8, 48(%rsi)     # store to dst
-        andq %r8, %r8         # val <= 0?
+        andq %r8, %r8         	# val <= 0?
         jle InLoop7
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 InLoop7:
-	mrmovq 56(%rdi), %r9     # read val
-        rmmovq %r9, 56(%rsi)     # store to dst
-        andq %r9, %r9         # val <= 0?
+        andq %r9, %r9         	# val <= 0?
         jle InLoop8
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 InLoop8:
-	mrmovq 64(%rdi), %r10     # read val
-        rmmovq %r10, 64(%rsi)     # store to dst
         andq %r10, %r10         # val <= 0?
         jle InLoop9
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 InLoop9:
-	mrmovq 72(%rdi), %r11     # read val
-        rmmovq %r11, 72(%rsi)     # store to dst
         andq %r11, %r11         # val <= 0?
         jle InLoopF
-        iaddq $1, %rax         # count++
+        iaddq $1, %rax         	# count++
 
 InLoopF:
 	iaddq $80, %rdi
@@ -98,7 +98,7 @@ Remain:
 	addq %rdx, %rdx		# len *= 8;
 	addq %rdx, %rdx
 	addq %rdx, %rdx
-	mrmovq JTEnd(%rdx), %rdx #use a jumptable to deal with left operations
+	mrmovq JTEnd(%rdx), %rdx # use a jumptable to deal with left operations
 	pushq %rdx		# jmp *(JTEND + 8*(len0 - 10))
 	ret
 
