@@ -272,7 +272,15 @@ bool set_cc = E_icode in { IOPQ, IIADDQ } &&		# add IIADDQ
 	!m_stat in { SADR, SINS, SHLT } && !W_stat in { SADR, SINS, SHLT };
 
 ## Generate valA in execute stage
-word e_valA = E_valA;    # Pass valA through stage
+#word e_valA = E_valA;    # Pass valA through stage
+# use m_valM as e_valA if the situation is mrmovq followed by rmmovq
+word e_valA = [
+	M_icode == IMRMOVQ && E_icode == IRMMOVQ
+		 && M_dstM == E_srcA && M_dstM != E_srcB: m_valM;
+	1 : E_valA; # Use value read from register file
+];
+
+
 
 ## Set dstE to RNONE in event of not-taken conditional move
 word e_dstE = [
@@ -329,7 +337,10 @@ bool F_bubble = 0;
 bool F_stall =
 	# Conditions for a load/use hazard
 	E_icode in { IMRMOVQ, IPOPQ } &&
-	 E_dstM in { d_srcA, d_srcB } ||
+	E_dstM in { d_srcA, d_srcB }  	
+	# add condition for rmmovq
+	&& !(D_icode == IRMMOVQ && E_dstM == d_srcA && E_dstM != d_srcB)
+	||
 	# Stalling at fetch while ret passes through pipeline
 	IRET in { D_icode, E_icode, M_icode };
 
@@ -338,14 +349,20 @@ bool F_stall =
 bool D_stall = 
 	# Conditions for a load/use hazard
 	E_icode in { IMRMOVQ, IPOPQ } &&
-	 E_dstM in { d_srcA, d_srcB };
+	 E_dstM in { d_srcA, d_srcB }	
+	# add condition for rmmovq
+	&& !(D_icode == IRMMOVQ && E_dstM == d_srcA && E_dstM != d_srcB)
+	;
 
 bool D_bubble =
 	# Mispredicted branch
 	(E_icode == IJXX && !e_Cnd) ||
 	# Stalling at fetch while ret passes through pipeline
 	# but not condition for a load/use hazard
-	!(E_icode in { IMRMOVQ, IPOPQ } && E_dstM in { d_srcA, d_srcB }) &&
+	!(E_icode in { IMRMOVQ, IPOPQ } && E_dstM in { d_srcA, d_srcB } 
+	# add condition for rmmovq
+	&& !(D_icode == IRMMOVQ && E_dstM == d_srcA && E_dstM != d_srcB)
+	) &&
 	  IRET in { D_icode, E_icode, M_icode };
 
 # Should I stall or inject a bubble into Pipeline Register E?
@@ -356,7 +373,10 @@ bool E_bubble =
 	(E_icode == IJXX && !e_Cnd) ||
 	# Conditions for a load/use hazard
 	E_icode in { IMRMOVQ, IPOPQ } &&
-	 E_dstM in { d_srcA, d_srcB};
+	 E_dstM in { d_srcA, d_srcB}
+	# add condition for rmmovq
+	&& !(D_icode == IRMMOVQ && E_dstM == d_srcA && E_dstM != d_srcB)
+;
 
 # Should I stall or inject a bubble into Pipeline Register M?
 # At most one of these can be true.
