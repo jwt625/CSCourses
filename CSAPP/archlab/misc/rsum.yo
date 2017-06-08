@@ -1,0 +1,58 @@
+                            | # Jiang Wentao
+                            | # 2013011717
+                            | 
+                            | # Execution begins at address 0
+0x000:                      |         .pos 0
+0x000: 30f40003000000000000 |         irmovq stack, %rsp      # set up stack pointer
+0x00a: 804800000000000000   |         call main               # execute main program
+0x013: 00                   |         halt
+                            | 
+                            | # Sample linked list
+0x018:                      | .align 8
+0x018:                      | ele1:   
+0x018: 0a00000000000000     |         .quad 0x00a
+0x020: 2800000000000000     |         .quad ele2
+0x028:                      | ele2:   
+0x028: b000000000000000     |         .quad 0x0b0
+0x030: 3800000000000000     |         .quad ele3
+0x038:                      | ele3:   
+0x038: 000c000000000000     |         .quad 0xc00
+0x040: 0000000000000000     |         .quad 0
+                            | 
+                            | 
+0x048:                      | main:
+0x048: 30f71800000000000000 |         irmovq ele1, %rdi
+0x052: 805c00000000000000   |         call rsum_list           # rsum_list(ele1)
+0x05b: 90                   |         ret
+                            | 
+                            | 
+                            | # long rsum_list(list_ptr ls)
+0x05c:                      | rsum_list:
+0x05c: 30f80800000000000000 | 	irmovq $0x8,%r8
+0x066: 6184                 | 	subq %r8, %rsp		
+0x068: a03f                 | 	pushq %rbx		# save %rbx
+0x06a: 2076                 |         rrmovq %rdi,%rsi        # %rsi = ls
+0x06c: 6300                 |         xorq %rax,%rax          # sum = 0
+0x06e: 6266                 |         andq %rsi,%rsi          # set CC
+0x070: 709d00000000000000   |         jmp test                # goto test
+0x079:                      | recur:
+0x079: 50360000000000000000 |         mrmovq (%rsi),%rbx	# %rbx = ls->next
+0x083: 50760800000000000000 | 	mrmovq 8(%rsi),%rdi
+0x08d: 805c00000000000000   | 	call rsum_list		# rsum_list(ls->next)
+0x096: 6030                 | 	addq %rbx, %rax		# %rax = val + rest
+0x098: b03f                 | 	popq %rbx		# restore %rbx
+0x09a: 6084                 | 	addq %r8, %rsp
+0x09c: 90                   | 	ret
+0x09d:                      | test:
+0x09d: 747900000000000000   |         jne recur               # stop when 0
+0x0a6: b03f                 | 	popq %rbx		# restore %rbx
+0x0a8: 6084                 | 	addq %r8, %rsp
+0x0aa: 90                   |         ret
+                            | 
+                            | 
+                            | 
+                            | 
+                            | # Stack starts here and grows to lower addresses
+0x300:                      |         .pos 0x300
+0x300:                      | stack:
+                            | 
