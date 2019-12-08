@@ -1,5 +1,6 @@
 # CSCourses
 
+- Convex Optimization (Summer 2018) (see [EE364a](http://web.stanford.edu/class/ee364a/))
 - Computer Architecture (Spring 2017), mainly following [CSAPP](http://csapp.cs.cmu.edu/)
 - Machine Learning (Spring 2017), from [coursera](https://www.coursera.org/learn/machine-learning/)
 - Data Structure (Autumn 2016)
